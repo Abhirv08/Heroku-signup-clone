@@ -61,7 +61,7 @@ export default function SignUpForm() {
                 }
 
                 return (
-                    <div className='lg:float flex flex-col lg:right-[-10px] lg:mr-[30px]' >
+                    <div className='lg:float flex flex-col lg:right-[-10px] lg:mr-[-30px]' >
                         {errorMsgs.length == 0 ? <div></div> : <Errors isAllFilled = {diffErrorMsg} errorMessages={errorMsgs} />}
                         <div className="bg-white p-4 md:p-8 rounded-md custom_shadow lg lg:w-[362px] ">
 
