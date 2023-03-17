@@ -43,7 +43,8 @@ export default function SignUpForm() {
                 const user = res.user;
                 await updateProfile(user, {
                     displayName: `${values.firstName} ${values.lastName}`
-                })                
+                }) 
+                localStorage.setItem("name", `${values.firstName} ${values.lastName}`);          
                 navigate("/home")
             })
             .catch((err) => {

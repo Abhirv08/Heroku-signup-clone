@@ -1,11 +1,24 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import {auth} from "../Firebase"
+import { onAuthStateChanged } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 
-export default function Home({name}) {
-    console.log(name)
+export default function Home() {
+
+    const [userName, setUserName] = useState("")
+    useEffect(() => {
+        auth.onAuthStateChanged((user) => {
+            if(user){
+                setUserName(user.displayName)
+            }else{
+                setUserName("")
+            }
+        })
+    }, [])
+
     return (
         <div>
-            {name && `Welcome - ${name}`}
+            Welcome - {userName}
         </div>
     )
 }
