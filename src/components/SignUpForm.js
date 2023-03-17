@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup';
 import Input from './Input';
@@ -7,7 +7,7 @@ import Errors from './Errors';
 import { roles, languages, countries, initialValues } from '../Constants'
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
 import { auth } from '../Firebase'
-import { useNavigate  } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SignUpError from './SignUpError';
 
 
@@ -36,15 +36,17 @@ export default function SignUpForm() {
             .matches(/[^\w]/, 'Password requires a symbol'),
     });
 
+
+
     const onSubmit = (values, action) => {
+        setErrorMsgs([]);
         createUserWithEmailAndPassword(auth, values.email, values.password)
-            .then(async(res) => {
+            .then(async (res) => {                
                 action.setSubmitting(false);
                 const user = res.user;
                 await updateProfile(user, {
                     displayName: `${values.firstName} ${values.lastName}`
-                }) 
-                localStorage.setItem("name", `${values.firstName} ${values.lastName}`);          
+                })
                 navigate("/home")
             })
             .catch((err) => {
@@ -67,36 +69,38 @@ export default function SignUpForm() {
                 const handleError = () => {
                     setErrorMsgs([])
                     const { firstName, lastName, email, role, location, dev_language, password } = formik.errors;
+                    const len = Object.keys(formik.errors).length === 0;
+                    console.log(errorMsgs)
 
-                    if (firstName != undefined && firstName.length > 40) {
+                    setDiffErrorMsg(false)
+                    if (firstName === "First name" || len) setErrorMsgs((err) => [...err, "First name"]);
+                    if (lastName === "Last name" || len) setErrorMsgs((err) => [...err, "Last name"]);
+                    if (email === "E-mail" || len) setErrorMsgs((err) => [...err, "E-mail"]);
+                    if (role === "Role" || len) setErrorMsgs((err) => [...err, "Role"]);
+                    if (location === "Country/Region" || len) setErrorMsgs((err) => [...err, 'Country/Region']);
+                    if (dev_language === "Primary development language" || len) setErrorMsgs((err) => [...err, "Primary development language"]);
+                    if (password === "Password" || len) setErrorMsgs((err) => [...err, "Password"]);
+                    console.log(errorMsgs)
+
+
+                    if (firstName == "First name is too long (maximum is 40 characters)" && errorMsgs.length != 0) {
                         setErrorMsgs((err) => [firstName]);
                         setDiffErrorMsg(true);
                         return;
                     }
 
-                    if (lastName != undefined && lastName.length > 40) {
+                    if (lastName == "Last name is too long (maximum is 40 characters)" && errorMsgs.length != 0) {
                         setErrorMsgs((err) => [lastName]);
                         setDiffErrorMsg(true);
                         return;
                     }
 
-                    setDiffErrorMsg(false);
-                    if (firstName === "First name") setErrorMsgs((err) => [...err, "First name"]);
-                    if (lastName === "Last name") setErrorMsgs((err) => [...err, "Last name"]);
-                    if (email === "E-mail") setErrorMsgs((err) => [...err, "E-mail"]);
-                    if (role === "Role") setErrorMsgs((err) => [...err, "Role"]);
-                    if (location === "Country/Region") setErrorMsgs((err) => [...err, 'Country/Region']);
-                    if (dev_language === "Primary development language") setErrorMsgs((err) => [...err, "Primary development language"]);
-                    if (password === "Password") setErrorMsgs((err) => [...err, "Password"]);
-
-
-                    if (errorMsgs.length == 0 && password != undefined && password.length > 8) {
+                    if (password != undefined && password.length > 8 && errorMsgs.length != 0) {
                         setErrorMsgs((err) => [password]);
                         setDiffErrorMsg(true);
                         return;
                     }
 
-                    
                 }
 
                 return (

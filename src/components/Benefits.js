@@ -22,7 +22,7 @@ function Benefits() {
                 <p className="text-left text-sm text-gray-600 ml-1">A platform for apps, with app management & instant scaling, for development and production.</p>
             </div>
             <hr className="mt-12 mb-10 m-auto w-full" />
-            <div className="flex flex-col text-center justify-center text-white">
+            <div className="flex flex-col text-center justify-center text-white mb-7">
                 <h2 className="flex items-center text-[#79589F] text-2xl mb-4">
                     <img src={deploy} alt='item' className="object-cover mr-3"/>
                     <div className="text-left">Deploy now</div>

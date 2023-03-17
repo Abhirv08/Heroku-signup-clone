@@ -17,7 +17,7 @@ export default function Home() {
     }, [])
 
     return (
-        <div>
+        <div className='text-center mt-10'>
             Welcome - {userName}
         </div>
     )
