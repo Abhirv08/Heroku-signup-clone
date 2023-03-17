@@ -95,7 +95,7 @@ export default function SignUpForm() {
                         return;
                     }
 
-                    if (password != undefined && password.length > 8 && errorMsgs.length != 0) {
+                    if (password != undefined && password != "Password" && errorMsgs.length == 1) {
                         setErrorMsgs((err) => [password]);
                         setDiffErrorMsg(true);
                         return;
