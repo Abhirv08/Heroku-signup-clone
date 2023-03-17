@@ -7,7 +7,7 @@ export default function Errors({ errorMessages, isAllFilled }) {
       {!isAllFilled && <p className='font-bold'>Please fill in all required fields.</p>}
       <ul className='list-disc pl-3 '>
         {errorMessages.map((error, index) => (
-          <li className='ml-4 ' key={index} >{error}</li>
+          <li className='ml-4' key={index} >{error}</li>
         ))}
       </ul>
     </div>

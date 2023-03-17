@@ -5,12 +5,20 @@ import Input from './Input';
 import Select from './Select';
 import Errors from './Errors';
 import { roles, languages, countries, initialValues } from '../Constants'
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { auth } from '../Firebase'
+import { useNavigate  } from 'react-router-dom';
+import SignUpError from './SignUpError';
 
 
 export default function SignUpForm() {
     const [errorMsgs, setErrorMsgs] = useState([]);
 
     const [diffErrorMsg, setDiffErrorMsg] = useState(false);
+
+    const [signupError, setSignupError] = useState("");
+
+    const navigate = useNavigate()
 
     const signupSchema = Yup.object().shape({
         firstName: Yup.string().min(1, 'Should Not be Empty').max(40, 'First name is too long (maximum is 40 characters)').required('First name'),
@@ -20,11 +28,32 @@ export default function SignUpForm() {
         role: Yup.string().required('Role'),
         location: Yup.string().required('Country/Region'),
         dev_language: Yup.string().required('Primary development language'),
+        password: Yup.string().required('Password')
+            .min(6, 'Password must have at least 6 characters')
+            .matches(/[0-9]/, 'Password requires a number')
+            .matches(/[a-z]/, 'Password requires a lowercase letter')
+            .matches(/[A-Z]/, 'Password requires an uppercase letter')
+            .matches(/[^\w]/, 'Password requires a symbol'),
     });
 
-    const onSubmit = (values) => {
-        console.log(values)
+    const onSubmit = (values, action) => {
+        createUserWithEmailAndPassword(auth, values.email, values.password)
+            .then(async(res) => {
+                action.setSubmitting(false);
+                const user = res.user;
+                await updateProfile(user, {
+                    displayName: `${values.firstName} ${values.lastName}`
+                })                
+                navigate("/home")
+            })
+            .catch((err) => {
+                console.log(err)
+                setSignupError(err.message)
+                action.setSubmitting(false);
+            })
     }
+
+
 
     return (
 
@@ -36,33 +65,43 @@ export default function SignUpForm() {
             {(formik) => {
                 const handleError = () => {
                     setErrorMsgs([])
-                    console.log(formik.errors);
-                    const {firstName, lastName, email, role, location, dev_language} = formik.errors;
-                    
-                    if(firstName != undefined && firstName.length > 40){
+                    const { firstName, lastName, email, role, location, dev_language, password } = formik.errors;
+
+                    if (firstName != undefined && firstName.length > 40) {
                         setErrorMsgs((err) => [firstName]);
                         setDiffErrorMsg(true);
-                        return ;
+                        return;
                     }
 
-                    if(lastName != undefined && lastName.length > 40){
+                    if (lastName != undefined && lastName.length > 40) {
                         setErrorMsgs((err) => [lastName]);
                         setDiffErrorMsg(true);
-                        return ;
+                        return;
                     }
 
+                    setDiffErrorMsg(false);
                     if (firstName === "First name") setErrorMsgs((err) => [...err, "First name"]);
                     if (lastName === "Last name") setErrorMsgs((err) => [...err, "Last name"]);
                     if (email === "E-mail") setErrorMsgs((err) => [...err, "E-mail"]);
                     if (role === "Role") setErrorMsgs((err) => [...err, "Role"]);
                     if (location === "Country/Region") setErrorMsgs((err) => [...err, 'Country/Region']);
                     if (dev_language === "Primary development language") setErrorMsgs((err) => [...err, "Primary development language"]);
+                    if (password === "Password") setErrorMsgs((err) => [...err, "Password"]);
 
+
+                    if (errorMsgs.length == 0 && password != undefined && password.length > 8) {
+                        setErrorMsgs((err) => [password]);
+                        setDiffErrorMsg(true);
+                        return;
+                    }
+
+                    
                 }
 
                 return (
-                    <div className='lg:float flex flex-col lg:right-[-10px] lg:mr-[-30px]' >
-                        {errorMsgs.length == 0 ? <div></div> : <Errors isAllFilled = {diffErrorMsg} errorMessages={errorMsgs} />}
+                    <div className='lg:float flex flex-col lg:mt-[-3px]  lg:mr-[-30px]' >
+                        {errorMsgs.length == 0 ? <div></div> : <Errors isAllFilled={diffErrorMsg} errorMessages={errorMsgs} />}
+                        {signupError && <SignUpError signupError={signupError} />}
                         <div className="bg-white p-4 md:p-8 rounded-md custom_shadow lg lg:w-[362px] ">
 
                             <Form >
@@ -73,7 +112,8 @@ export default function SignUpForm() {
                                 <Select options={roles} name="role" label="Role" isRequired={true} placeholder='Role' />
                                 <Select options={countries} name="location" label="Country/Region" isRequired={true} placeholder="Country/Region" />
                                 <Select options={languages} name="dev_language" label="Primary development language" isRequired={true} placeholder="Select a language" />
-                                <button className="bg-[#1869CB] w-full border-[1px] rounded-[4px] hover:bg-[#0650aa] text-center text-white p-4 mt-1 mb-4 font-bold cursor-pointer" type="submit" onClick={handleError}>CREATE AN ACCOUNT</button>
+                                <Input type="password" name="password" label='Password' placeholder="Password" isRequired={true} />
+                                <button className="bg-[#1869CB] w-full border-[1px] rounded-[4px] hover:bg-[#0650aa] text-center text-white p-4 mt-1 mb-4 font-bold cursor-pointer" type="submit" onClick={handleError} disabled={formik.isSubmitting} >{formik.isSubmitting ? "SENDING..." : "CREATE AN ACCOUNT"}</button>
                             </Form>
                             <div className="text-[13px] text-text_color">
                                 <p>

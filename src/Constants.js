@@ -260,4 +260,5 @@ export const initialValues = {
     role: '',
     location: '',
     dev_language: '',
+    password: ''
 }
