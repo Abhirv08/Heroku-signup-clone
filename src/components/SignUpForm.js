@@ -107,7 +107,7 @@ export default function SignUpForm() {
                     <div className='lg:float flex flex-col lg:mt-[-3px] lg:mr-[-30px]' >
                         {errorMsgs.length == 0 ? <div></div> : <Errors isAllFilled={diffErrorMsg} errorMessages={errorMsgs} />}
                         {signupError && <SignUpError signupError={signupError} />}
-                        <div className="bg-white p-4 md:p-[30px] rounded-md custom_shadow lg lg:w-[362px] ">
+                        <div className="bg-white p-4 p-[15px] lg:p-[30px] m-[-20px] mt-[-5px] lg:m-0 rounded-md custom_shadow lg lg:w-[362px] ">
 
                             <Form >
                                 <Input type="text" name="firstName" label='First name' placeholder="First name" isRequired={true} />
@@ -120,7 +120,7 @@ export default function SignUpForm() {
                                 <Input type="password" name="password" label='Password' placeholder="Password" isRequired={true} />
                                 <button className="bg-[#1869CB] font-input w-full border-[1px] rounded-[4px] hover:bg-[#0650aa] text-center text-white p-4 mt-1 mb-4 font-bold cursor-pointer text-[13px]" type="submit" onClick={handleError} disabled={formik.isSubmitting} >{formik.isSubmitting ? "SENDING..." : "CREATE AN ACCOUNT"}</button>
                             </Form>
-                            <div className="text-[13px] font-sans text-text_color">
+                            <div className="text-[13px] font-sans text-text_color leading-[1.5] antialiased">
                                 <p>
                                     Signing up signifies that you have read and agree to the <a className="text-[#1869CB] underline" href="https://www.heroku.com/policy" >Terms of Service</a> and our &nbsp;
                                     <a className="text-[#1869CB] underline" href="https://www.salesforce.com/company/privacy/" >Privacy Policy</a>.
