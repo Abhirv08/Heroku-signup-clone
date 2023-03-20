@@ -5,7 +5,7 @@ import deploy from "../assets/deploy.png"
 
 function Benefits() {
     return (
-        <div id="benefits" className="flex flex-col md:p-10 bg-[#F9F8FA] pb-5 lg:w-[calc(100%-332px)] box-border">
+        <div id="benefits" className="flex flex-col md:p-10 font-light bg-[#F9F8FA] pb-5 lg:w-[calc(100%-332px)] box-border">
             <div className="flex flex-col text-white">
                 <h2 className="flex items-center text-[#79589F] text-2xl mb-4">
                     <img src={user} alt='item' className="object-cover mr-3" />
